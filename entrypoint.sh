@@ -1,14 +1,14 @@
 #!/bin/bash -i
 set -e
 
-. /root/.bashrc
+. ${HOME}/.bashrc
 
 WORKDIR=${SRCDIR:-/src}
 
 cd $WORKDIR
 
 if [ -f requirements.txt ]; then
-    pip install -r requirements.txt
+    pip install --user -r requirements.txt
 fi # [ -f requirements.txt ]
 
 echo "$@"
@@ -19,4 +19,3 @@ if [[ "$@" == "" ]]; then
 else
     sh -c "$@"
 fi # [[ "$@" == "" ]]
-
