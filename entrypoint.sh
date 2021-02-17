@@ -13,7 +13,7 @@ if [[ "$PYPI_URL" != "https://pypi.python.org/" ]] || \
     pip config set global.index-url "$PYPI_INDEX_URL"
 fi
 
-cat ${HOME}/.pip/pip.conf
+pip config list
 
 if [ -f requirements.txt ]; then
     pip install --user -r requirements.txt
