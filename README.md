@@ -17,3 +17,13 @@ docker run --rm -v "$(pwd):/src/" --entrypoint /bin/sh ppolxda/pyinstaller-linux
 ```bash
 docker run --rm -v "$(pwd):/src/" ppolxda/pyinstaller-linux "pyinstaller your-script.py"
 ```
+
+## Build
+
+```bash
+docker build --rm --tag=ppolxda/pyinstaller-linux .
+```
+
+```bash
+docker build --rm --tag=ppolxda/pyinstaller-linux --build-arg PYPI_INDEX_URL_ARG=https://pypi.douban.com/simple/ . 
+```

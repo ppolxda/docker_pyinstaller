@@ -2,8 +2,12 @@
 ARG BASE_TAG=3.8-buster
 FROM python:${BASE_TAG}
 
-ENV PYPI_URL=https://pypi.python.org/
-ENV PYPI_INDEX_URL=https://pypi.python.org/simple/
+ARG PYINSTALLER_VERSION=4.2
+ARG STATICX_VERSION=0.12.1
+ARG PYPI_URL_ARG=https://pypi.python.org/
+ARG PYPI_INDEX_URL_ARG=https://pypi.python.org/simple/
+ENV PYPI_URL=$PYPI_URL_ARG
+ENV PYPI_INDEX_URL=$PYPI_INDEX_URL_ARG
 
 RUN useradd -m appuser
 USER appuser
@@ -18,7 +22,7 @@ RUN . ~/.bashrc
 
 RUN pip config set global.index "$PYPI_URL"
 RUN pip config set global.index-url "$PYPI_INDEX_URL"
-RUN pip install --user pyinstaller staticx -U
+RUN pip install --user pyinstaller==$PYINSTALLER_VERSION staticx==$STATICX_VERSION -U --no-warn-script-location
 
 VOLUME /src/
 WORKDIR /src/
