@@ -23,6 +23,7 @@ RUN . ~/.bashrc
 RUN pip config set global.index "$PYPI_URL"
 RUN pip config set global.index-url "$PYPI_INDEX_URL"
 RUN pip install --user pyinstaller==$PYINSTALLER_VERSION staticx==$STATICX_VERSION -U --no-warn-script-location
+RUN python --version
 
 VOLUME /src/
 WORKDIR /src/

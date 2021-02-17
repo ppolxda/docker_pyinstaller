@@ -46,13 +46,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
+      - name: Build image lastest 38
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: Build image 3.7-stretch
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME:py37 --build-arg BASE_TAG=3.7-stretch
+
+      - name: Build image 3.8-buster
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME:py38 --build-arg BASE_TAG=3.8-buster
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - name: Push image
+      - name: Push image github
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
 
@@ -72,4 +78,8 @@ jobs:
           echo VERSION=$VERSION
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag $IMAGE_NAME:py37 $IMAGE_ID:py37-$VERSION
+          docker tag $IMAGE_NAME:py38 $IMAGE_ID:py38-$VERSION
           docker push $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:py37-$VERSION
+          docker push $IMAGE_ID:py38-$VERSION
