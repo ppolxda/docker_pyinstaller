@@ -7,6 +7,14 @@ WORKDIR=${SRCDIR:-/src}
 
 cd $WORKDIR
 
+if [[ "$PYPI_URL" != "https://pypi.python.org/" ]] || \
+   [[ "$PYPI_INDEX_URL" != "https://pypi.python.org/simple" ]]; then
+    pip config set global.index "$PYPI_URL"
+    pip config set global.index-url "$PYPI_INDEX_URL"
+fi
+
+cat ${HOME}/.pip/pip.conf
+
 if [ -f requirements.txt ]; then
     pip install --user -r requirements.txt
 fi # [ -f requirements.txt ]

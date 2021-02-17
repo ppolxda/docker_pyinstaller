@@ -1,10 +1,9 @@
 # ARG BASE_TAG=3.7-stretch
 ARG BASE_TAG=3.8-buster
-
 FROM python:${BASE_TAG}
 
 ENV PYPI_URL=https://pypi.python.org/
-ENV PYPI_INDEX_URL=https://pypi.douban.com/simple/
+ENV PYPI_INDEX_URL=https://pypi.python.org/simple/
 
 RUN useradd -m appuser
 USER appuser
@@ -18,7 +17,6 @@ RUN echo 'export PATH="$PYUSER_PATH/bin:$PATH"' >> ~/.bashrc
 RUN . ~/.bashrc
 
 RUN pip config set global.index "$PYPI_URL"
-RUN pip config set global.index-url "$PYPI_INDEX_URL"
 RUN pip config set global.index-url "$PYPI_INDEX_URL"
 RUN pip install --user pyinstaller staticx -U
 
