@@ -55,12 +55,42 @@ jobs:
       - name: Build image 3.8-buster
         run: docker build . --file Dockerfile --tag $IMAGE_NAME:py38 --build-arg BASE_TAG=3.8-buster
 
-      - name: Log into registry
+      - name: Log into registry to github
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - name: Push image github
+      - name: Push image to github
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag $IMAGE_NAME:py37 $IMAGE_ID:py37-$VERSION
+          docker tag $IMAGE_NAME:py38 $IMAGE_ID:py38-$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+
+          docker push $IMAGE_ID:py37-$VERSION
+          docker push $IMAGE_ID:py38-$VERSION
+          docker push $IMAGE_ID:$VERSION
+
+      - name: Log into registry to dockerhub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ github.actor }} --password-stdin
+
+      - name: Push image to dockerhub
+        run: |
+          IMAGE_ID=${{ github.actor }}/$IMAGE_NAME
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -80,6 +110,7 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker tag $IMAGE_NAME:py37 $IMAGE_ID:py37-$VERSION
           docker tag $IMAGE_NAME:py38 $IMAGE_ID:py38-$VERSION
-          docker push $IMAGE_ID:$VERSION
+
           docker push $IMAGE_ID:py37-$VERSION
           docker push $IMAGE_ID:py38-$VERSION
+          docker push $IMAGE_ID:$VERSION
