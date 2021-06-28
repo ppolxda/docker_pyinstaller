@@ -2,8 +2,8 @@
 ARG BASE_TAG=3.8-buster
 FROM python:${BASE_TAG}
 
-ARG PYINSTALLER_UID="70000"
-ARG PYINSTALLER_GID="70000"
+ARG PYINSTALLER_UID="1000"
+ARG PYINSTALLER_GID="1000"
 ARG PYINSTALLER_VERSION=4.2
 ARG PYINSTALLER_USER_HOME_DIR=/home/pyinstaller
 ARG STATICX_VERSION=0.12.1
@@ -16,10 +16,10 @@ ENV PYINSTALLER_UID=${PYINSTALLER_UID}
 ENV PYINSTALLER_GID=${PYINSTALLER_GID}
 ENV PYINSTALLER_USER_HOME_DIR=${PYINSTALLER_USER_HOME_DIR}
 
-RUN addgroup --gid "${PYINSTALLER_GID}" "pyinstaller" && \
-    adduser --quiet "pyinstaller" --uid "${PYINSTALLER_UID}" \
+RUN addgroup --gid "${PYINSTALLER_GID}" "pyinstaller"
+RUN useradd -m --uid "${PYINSTALLER_UID}" \
         --gid "${PYINSTALLER_GID}" \
-        --home "${PYINSTALLER_USER_HOME_DIR}"
+        --home-dir "${PYINSTALLER_USER_HOME_DIR}" pyinstaller
 
 ARG PYINSTALLER_HOME
 ENV PYINSTALLER_HOME=${PYINSTALLER_HOME}
@@ -30,6 +30,8 @@ USER ${PYINSTALLER_UID}
 # RUN mkdir /home/appuser/.local/bin
 # RUN chown -R appuser /home/appuser/
 # RUN ls -lha /home/appuser
+RUN echo $HOME/.local
+RUN id -u
 RUN echo 'export PYUSER_PATH="$HOME/.local"' >> ~/.bashrc
 RUN echo 'export PATH="$PYUSER_PATH/bin:$PATH"' >> ~/.bashrc
 RUN . ~/.bashrc
