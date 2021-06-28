@@ -2,15 +2,29 @@
 ARG BASE_TAG=3.8-buster
 FROM python:${BASE_TAG}
 
+ARG PYINSTALLER_UID="70000"
+ARG PYINSTALLER_GID="70000"
 ARG PYINSTALLER_VERSION=4.2
+ARG PYINSTALLER_USER_HOME_DIR=/home/pyinstaller
 ARG STATICX_VERSION=0.12.1
 ARG PYPI_URL_ARG=https://pypi.python.org/
 ARG PYPI_INDEX_URL_ARG=https://pypi.python.org/simple/
+
 ENV PYPI_URL=$PYPI_URL_ARG
 ENV PYPI_INDEX_URL=$PYPI_INDEX_URL_ARG
+ENV PYINSTALLER_UID=${PYINSTALLER_UID}
+ENV PYINSTALLER_GID=${PYINSTALLER_GID}
+ENV PYINSTALLER_USER_HOME_DIR=${PYINSTALLER_USER_HOME_DIR}
 
-RUN useradd -m appuser
-USER appuser
+RUN addgroup --gid "${PYINSTALLER_GID}" "pyinstaller" && \
+    adduser --quiet "pyinstaller" --uid "${PYINSTALLER_UID}" \
+        --gid "${PYINSTALLER_GID}" \
+        --home "${PYINSTALLER_USER_HOME_DIR}"
+
+ARG PYINSTALLER_HOME
+ENV PYINSTALLER_HOME=${PYINSTALLER_HOME}
+USER ${PYINSTALLER_UID}
+
 # RUN mkdir /home/appuser
 # RUN mkdir /home/appuser/.local
 # RUN mkdir /home/appuser/.local/bin
