@@ -1,6 +1,8 @@
 #!/bin/bash -i
 set -e
 
+echo UID $(id -u)
+echo GID $(id -g)
 . ${HOME}/.bashrc
 
 WORKDIR=${SRCDIR:-/src}
